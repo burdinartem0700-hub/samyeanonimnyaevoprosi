@@ -19,13 +19,22 @@ awaiting_replay = {}
 info_message = {}
 replay_id = {}
 delete_mes_usr = {}
+repli_await = {}
+static_user = [{}]
+
 
 @dp.message(Command("start"))
 async def cmd_start(message: Message, command: CommandObject):
     args = command.args
     user = message.from_user
     user_id = user.id
-
+    username = "@teste32bot"
+    url_bot_chan = f"https://t.me/{username}?startchannel=start"
+    url_bot_gr = f"https://t.me/{username}?startgroup=start"
+    add_chanal = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text = "Добавить в канал",url=url_bot_chan)],
+        [InlineKeyboardButton(text="Добавить в группу", url=url_bot_gr)]
+    ])
     if args:
         try:
             referrer_id = int(args)
@@ -44,10 +53,8 @@ async def cmd_start(message: Message, command: CommandObject):
         await message.answer(
             f"Здесь вы можете получать анонимные сообщения!!\n\n"
             f"Ваша  ссылка:\n{ref_link}\n\n"
-            f"Благодоря этой ссылке, люди смогут писать вам анонимные сообщения!!",
+            f"Благодоря этой ссылке, люди смогут писать вам анонимные сообщения!!", reply_markup=add_chanal
         )
-
-
 @dp.message()
 async def forward_to_referrer(message: Message):
     user_id = message.from_user.id
@@ -66,31 +73,31 @@ async def forward_to_referrer(message: Message):
         ])
         try:
             if message.text:
-                text = f"💬 Вам пришло сообщение: \n\n{message.text}"
-                mesid= await bot.send_message(chat_id=referrer_id, text=text, parse_mode="Markdown", reply_markup=replay_key)
+                text = f"💬 Вам пришло сообщение:\n\n{message.text}\n\nСвайпните для ответа⏩"
+                mesid= await bot.send_message(chat_id=referrer_id, text=text, parse_mode="Markdown")
                 if referrer_id in idM:
                     await bot.send_message(chat_id=referrer_id, text = f"Юзер @{message.from_user.username}\nимя = {message.from_user.first_name}\nайди = {message.from_user.id}")
             elif message.photo:
                 file_id = message.photo[-1].file_id
-                cap = message.caption or ""
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
                 mesid = await bot.send_photo(chat_id=referrer_id, photo=file_id, caption=cap)
                 if referrer_id == idM:
                     await bot.send_message(chat_id=referrer_id, text = f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
             elif message.video:
                 file_id = message.video.file_id
-                cap = message.caption or ""
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
                 mesid = await bot.send_video(chat_id=referrer_id, video=file_id, caption= cap)
                 if referrer_id == idM:
                     await bot.send_message(chat_id=referrer_id, text = f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
             elif message.audio:
                 file_id =message.audio.file_id
-                cap = message.caption or ""
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
                 mesid = await bot.send_audio(chat_id=referrer_id, audio=file_id, caption=cap)
                 if referrer_id == idM:
                     await bot.send_message(chat_id=referrer_id, text = f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
             elif message.voice:
                 file_id = message.voice.file_id
-                cap = message.caption
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
                 mesid = await bot.send_voice(chat_id=referrer_id, voice=file_id, caption=cap)
                 if referrer_id == idM:
                     await bot.send_message(chat_id=referrer_id, text = f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
@@ -104,57 +111,109 @@ async def forward_to_referrer(message: Message):
             await message.reply("Не удалось доставить сообщение.")
         delete_mes_usr[user_id] = mesid.message_id
         print(mesid.message_id)
-
-
+        repli_await[mesid.message_id] = user_id
+        print(repli_await)
+        user_referrer.clear()
     if user_id in awaiting_replay:
 
-        replay_key = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Ответить", callback_data=f"reply_{user_id}")]
-        ])
         user_reply = awaiting_replay.pop(user_id)
         delte_key = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Удалить сообщенние", callback_data=f"delet_{user_reply}")]
         ])
         if message.text:
-            mesid = await bot.send_message(chat_id=user_reply, text=f"📩 Вам ответили на ваше сообщение:\n\n{message.text}", reply_markup=replay_key)
+            mesid = await bot.send_message(chat_id=user_reply, text=f"📩 Вам ответили на ваше сообщение:\n\n{message.text}\n\nСвпайните для ответа⏩")
             if user_reply == idM:
                 await bot.send_message(chat_id=user_reply,
                                        text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
         elif message.photo:
             file_id = message.photo[-1].file_id
-            cap = message.caption or ""
-            mesid = await bot.send_photo(chat_id=user_reply, photo=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}", reply_markup=replay_key)
+            cap = message.caption + "\n\nСвайпните для ответа⏩"
+            mesid = await bot.send_photo(chat_id=user_reply, photo=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
             if user_reply == idM:
                 await bot.send_message(chat_id=user_reply,
                                        text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
         elif message.video:
             file_id = message.video.file_id
-            cap = message.caption or ""
-            mesid = await bot.send_video(chat_id=user_reply, video=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}", reply_markup=replay_key)
+            cap = message.caption + "\n\nСвайпните для ответа⏩"
+            mesid = await bot.send_video(chat_id=user_reply, video=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
             if user_reply == idM:
                 await bot.send_message(chat_id=user_reply,
                                        text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
         elif message.audio:
             file_id = message.audio.file_id
-            cap = message.caption or ""
-            mesid = await bot.send_audio(chat_id=user_reply, audio=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}", reply_markup=replay_key)
+            cap = message.caption + "\n\nСвайпните для ответа⏩"
+            mesid = await bot.send_audio(chat_id=user_reply, audio=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
             if user_reply == idM:
                 await bot.send_message(chat_id=user_reply,
                                        text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
         elif message.voice:
             file_id = message.voice.file_id
-            cap = message.caption
-            mesid = await bot.send_voice(chat_id=user_reply, voice=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}", reply_markup=replay_key)
+            cap = message.caption + "\n\nСвайпните для ответа⏩"
+            mesid = await bot.send_voice(chat_id=user_reply, voice=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
             if user_reply == idM:
                 await bot.send_message(chat_id=user_reply,
                                        text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
         await message.reply("✅ Сообщение отправлено.", reply_markup=delte_key)
         delete_mes_usr[user_id] = mesid.message_id
+        awaiting_replay.clear()
+
     if user_id in info_message:
         try:
             await bot.delete_message(chat_id=user_id, message_id=info_message[user_id])
         except Exception:
             pass
+    if message.reply_to_message:
+        delte_key = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Удалить сообщенние", callback_data=f"delet_{user_id}")]
+        ])
+        mes_rep = message.reply_to_message.message_id
+        if mes_rep in repli_await:
+            id_usr = repli_await.pop(mes_rep)
+            if message.text:
+                mesid = await bot.send_message(chat_id=id_usr,
+                                               text=f"📩 Вам ответили на ваше сообщение:\n\n{message.text}\n\nСвайпните для ответа⏩"
+                                               )
+                if id_usr == idM:
+                    await bot.send_message(chat_id=id_usr,
+                                           text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
+            elif message.photo:
+                file_id = message.photo[-1].file_id
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
+                mesid = await bot.send_photo(chat_id=id_usr, photo=file_id,
+                                             caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}"
+                                             )
+                if id_usr == idM:
+                    await bot.send_message(chat_id=id_usr,
+                                           text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
+            elif message.video:
+                file_id = message.video.file_id
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
+                mesid = await bot.send_video(chat_id=id_usr, video=file_id,
+                                             caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
+                if id_usr == idM:
+                    await bot.send_message(chat_id=id_usr,
+                                           text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
+            elif message.audio:
+                file_id = message.audio.file_id
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
+                mesid = await bot.send_audio(chat_id=id_usr, audio=file_id,
+                                             caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
+                if id_usr == idM:
+                    await bot.send_message(chat_id=id_usr,
+                                           text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
+            elif message.voice:
+                file_id = message.voice.file_id
+                cap = message.caption + "\n\nСвайпните для ответа⏩"
+                mesid = await bot.send_voice(chat_id=id_usr, voice=file_id,
+                                             caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
+                if id_usr == idM:
+                    await bot.send_message(chat_id=id_usr,
+                                           text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
+            await message.reply("✅ Сообщение отправлено.", reply_markup=delte_key)
+            repli_await[mesid.message_id] = user_id
+            delete_mes_usr[user_id] = mesid.message_id
+
+
 @dp.callback_query(F.data.startswith("reply_"))
 async def reply_user(callback: CallbackQuery):
     try:
@@ -214,5 +273,4 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-
         print("Exit")
