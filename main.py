@@ -116,51 +116,8 @@ async def forward_to_referrer(message: Message):
             await message.reply("Не удалось доставить сообщение.")
         delete_mes_usr[user_id] = mesid.message_id
         print(mesid.message_id)
-        repli_await[mesid.message_id] = referrer_id
+        repli_await[mesid.message_id] = user_id
         print(repli_await)
-        user_referrer.clear()
-    if user_id in awaiting_replay:
-
-        user_reply = awaiting_replay.pop(user_id)
-        delte_key = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Удалить сообщенние", callback_data=f"delet_{user_reply}")]
-        ])
-        if message.text:
-            mesid = await bot.send_message(chat_id=user_reply, text=f"📩 Вам ответили на ваше сообщение:\n\n{message.text}\n\nСвпайните для ответа⏩")
-            if user_reply == idM:
-                await bot.send_message(chat_id=user_reply,
-                                       text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
-        elif message.photo:
-            file_id = message.photo[-1].file_id
-            cap = message.caption + "\n\nСвайпните для ответа⏩"
-            mesid = await bot.send_photo(chat_id=user_reply, photo=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
-            if user_reply == idM:
-                await bot.send_message(chat_id=user_reply,
-                                       text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
-        elif message.video:
-            file_id = message.video.file_id
-            cap = message.caption + "\n\nСвайпните для ответа⏩"
-            mesid = await bot.send_video(chat_id=user_reply, video=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
-            if user_reply == idM:
-                await bot.send_message(chat_id=user_reply,
-                                       text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
-        elif message.audio:
-            file_id = message.audio.file_id
-            cap = message.caption + "\n\nСвайпните для ответа⏩"
-            mesid = await bot.send_audio(chat_id=user_reply, audio=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
-            if user_reply == idM:
-                await bot.send_message(chat_id=user_reply,
-                                       text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
-        elif message.voice:
-            file_id = message.voice.file_id
-            cap = message.caption + "\n\nСвайпните для ответа⏩"
-            mesid = await bot.send_voice(chat_id=user_reply, voice=file_id, caption=f"📩 Вам ответили на ваше сообщение:\n\n{cap}")
-            if user_reply == idM:
-                await bot.send_message(chat_id=user_reply,
-                                       text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
-        await message.reply("✅ Сообщение отправлено.", reply_markup=delte_key)
-        delete_mes_usr[user_id] = mesid.message_id
-        awaiting_replay.clear()
 
     if user_id in info_message:
         try:
@@ -217,21 +174,6 @@ async def forward_to_referrer(message: Message):
             await message.reply("✅ Сообщение отправлено.", reply_markup=delte_key)
             repli_await[mesid.message_id] = user_id
             delete_mes_usr[user_id] = mesid.message_id
-
-
-@dp.callback_query(F.data.startswith("reply_"))
-async def reply_user(callback: CallbackQuery):
-    try:
-        sender_id = int(callback.data.split("_")[1])
-        print(sender_id)
-    except (IndexError, ValueError):
-        print(callback.data.split("-")[1])
-        await callback.answer("Ошибка идентификатора.")
-        return
-    awaiting_replay[callback.from_user.id] = sender_id
-    await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.answer()
-    await callback.message.answer(text="Напишите сообщение: ")
 
 @dp.callback_query(F.data.startswith("delet_"))
 async def delete_mess(callback: CallbackQuery):
