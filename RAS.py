@@ -55,6 +55,11 @@ async def cmd_start(message: Message, command: CommandObject):
             f"Ваша  ссылка:\n{ref_link}\n\n"
             f"Благодоря этой ссылке, люди смогут писать вам анонимные сообщения!!", reply_markup=add_chanal
         )
+@dp.message(Command("static"))
+async def static_info(message:Message):
+    await message.answer(f"Здесь вы можете посмотреть свою статистику:\n\nПерешло по ссылке:null\nОтправлено вами сообщений:null\nПолучено сообщенний:null\n\nДля увелечения статистики присылайте друзьям, знакомомым совим друзьям!")
+
+
 @dp.message()
 async def forward_to_referrer(message: Message):
     user_id = message.from_user.id
@@ -273,5 +278,4 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-
         print("Exit")
