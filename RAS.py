@@ -111,7 +111,7 @@ async def forward_to_referrer(message: Message):
             await message.reply("Не удалось доставить сообщение.")
         delete_mes_usr[user_id] = mesid.message_id
         print(mesid.message_id)
-        repli_await[mesid.message_id] = user_id
+        repli_await[mesid.message_id] = referrer_id
         print(repli_await)
         user_referrer.clear()
     if user_id in awaiting_replay:
@@ -273,4 +273,5 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
+
         print("Exit")
