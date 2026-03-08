@@ -65,7 +65,7 @@ async def static_info(message:Message):
 @router.message(F.user_shared)
 async def set_info(message: Message, bot: Bot):
     shared = message.user_shared.user_id
-    if a.is_admin(shared):
+    if a.is_prem(shared):
          await message.answer("❌Этот пользователь уже премиум!")
          return
     try:
@@ -76,7 +76,7 @@ async def set_info(message: Message, bot: Bot):
         first_name = " "
         username = None
         await message.answer("❌Пользователя невозможно добавить, так как он еще ни разу не писал боту")
-    if message.from_user.id in ADMINS:
+    if a.is_admin(message.from_user.id):
         a.add_premium(shared,
                     first_name,
                     username)
@@ -279,4 +279,5 @@ async def send_back(callback: CallbackQuery):
         f"💌Добро пожаловать!\n\n"
         f"📎Ваша  ссылка:\n{ref_link}\n\n"
         f"👥С помощью этой ссылке, люди смогут писать вам анонимные сообщения!!",
+
     )
