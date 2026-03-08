@@ -1,4 +1,5 @@
 import sqlite3
+
 con = sqlite3.connect("bot.db", check_same_thread=False)
 cursor = con.cursor()
 
@@ -34,6 +35,10 @@ def get_all_adm():
     cursor.execute("SELECT * FROM admins")
     return cursor.fetchall()
 
+def get_id_admin():
+    cursor.execute("SELECT user_id FROM admins")
+    return cursor.fetchone()
+
 def is_admin(user_id):
     cursor.execute("SELECT 1 FROM admins WHERE user_id=?", (user_id,))
     return cursor.fetchone() is not None
@@ -57,7 +62,7 @@ def is_prem(user_id):
 
 def get_premium():
     cursor.execute("SELECT * FROM premium")
-    return cursor.fetchone()
+    return cursor.fetchall()
 
 #рейтинг
 def add_id(user_id):

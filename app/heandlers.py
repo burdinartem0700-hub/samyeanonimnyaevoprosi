@@ -91,7 +91,9 @@ async def idea_usr(message: Message, state: FSMContext):
 @router.message(idea.idea_text)
 async def add_text_idea(message: Message, state: FSMContext):
     if message.text:
-        await message.bot.send_message(chat_id=ADMINS[0], text = f"Пользователь {message.from_user.id} {message.from_user.username} Предлагает"
+        id_admin = a.get_id_admin()
+        for admin in id_admin:
+            await message.bot.send_message(chat_id=admin, text = f"Пользователь {message.from_user.id} {message.from_user.username} Предлагает"
                                                                  f"\n\n<blockquote>{message.text}</blockquote>\n", parse_mode="HTML")
 
 
@@ -279,5 +281,4 @@ async def send_back(callback: CallbackQuery):
         f"💌Добро пожаловать!\n\n"
         f"📎Ваша  ссылка:\n{ref_link}\n\n"
         f"👥С помощью этой ссылке, люди смогут писать вам анонимные сообщения!!",
-
     )
