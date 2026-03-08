@@ -15,7 +15,7 @@ back_send = InlineKeyboardMarkup(inline_keyboard =[
 ])
 
 async def main():
-    bot = Bot(token='8435911952:AAHNtSEff8Mv8cpt1bkguMEqzhyDcnrkQZM')
+    bot = Bot(token='8569542955:AAHz8MZHouGM8Vy52Aa5_47iFvWXIXh-U1I')
     dp = Dispatcher()
     dp.include_router(router)
     await dp.start_polling(bot)
@@ -24,4 +24,5 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
+
         print("Exit")
