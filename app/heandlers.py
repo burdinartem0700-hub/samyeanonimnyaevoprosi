@@ -96,7 +96,7 @@ async def set_info(message: Message, bot: Bot):
             end = datetime.fromisoformat(endbd[0])
             date = end.strftime("%d.%m.%Y %H:%M")
         text = f"\nПремиум активен до {date}" if a.is_prem(shared) else "Премиум не активен"
-        await message.answer(f"Пользователь <code>{chat.id}</code>, {chat.username or " "}<code>\n{text}</code>", reply_markup=get_prem, parse_mode="HTML")
+        await message.answer(f"Пользователь <code>{chat.id}</code>, {chat.username or ' '}<code>\n{text}</code>", reply_markup=get_prem, parse_mode="HTML")
 
 @router.message(Command("setprem"))
 async def add_preimum(message:Message, command: CommandObject, state: FSMContext):
