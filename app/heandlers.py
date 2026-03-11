@@ -133,7 +133,7 @@ async def add_preimum(message:Message, command: CommandObject, state: FSMContext
             a.add_premium(info["id_state"], info["first_state"], info["username_state"])
             a.add_date(user_id, user["end"])
             await message.bot.send_message(chat_id=idu, text=f"Поздравляем, вы стали обладателем премиума!"
-                                                             f"\n\nПодписка действует до {user["end"].strftime("%d.%m.%Y %H:%M")}")
+                                                             f'\n\nПодписка действует до {user["end"].strftime('%d.%m.%Y %H:%M')}')
             await message.answer("Премиум успешно выдан")
         if date == "д":
             user = {
@@ -144,7 +144,7 @@ async def add_preimum(message:Message, command: CommandObject, state: FSMContext
             a.add_premium(info["id_state"], info["first_state"], info["username_state"])
             a.add_date(user_id, user["end"])
             await message.bot.send_message(chat_id=idu, text = f"Поздравляем, вы стали обладателем премиума!"
-                                                               f"\n\nПодписка действует до {user["end"].strftime("%d.%m.%Y %H:%M")}")
+                                                               f'\n\nПодписка действует до {user["end"].strftime("%d.%m.%Y %H:%M")}')
             await message.answer("Премиум успешно выдан")
 
 @router.message(Command("idea"))
@@ -212,7 +212,7 @@ async def state_prem(message: Message, state: FSMContext):
     a.add_date(data["id_state"], user["end"])
     await message.answer(f"✅Премиум успешно выдан, преимум продлиться до `{user["end"]}`", parse_mode="Markdown")
     dat = user["end"]
-    await message.bot.send_message(chat_id=data["id_state"], text=f"✅Вы стали премиум пользователем, ваша подписка продлиться до `{dat.strftime("%d.%m.%Y %H:%M")}`", parse_mode="MarkdownV2")
+    await message.bot.send_message(chat_id=data["id_state"], text=f"✅Вы стали премиум пользователем, ваша подписка продлиться до `{dat.strftime('%d.%m.%Y %H:%M')}`", parse_mode="MarkdownV2")
     await state.clear()
 
 @router.message()
