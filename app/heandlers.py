@@ -133,7 +133,7 @@ async def add_preimum(message:Message, command: CommandObject, state: FSMContext
             a.add_premium(info["id_state"], info["first_state"], info["username_state"])
             a.add_date(user_id, user["end"])
             await message.bot.send_message(chat_id=idu, text=f"Поздравляем, вы стали обладателем премиума!"
-                                                             f'\n\nПодписка действует до {user["end"].strftime('%d.%m.%Y %H:%M')}')
+                                                             f'\n\nПодписка действует до {user["end"].strftime("%d.%m.%Y %H:%M")}')
             await message.answer("Премиум успешно выдан")
         if date == "д":
             user = {
