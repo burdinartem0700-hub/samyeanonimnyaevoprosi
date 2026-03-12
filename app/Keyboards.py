@@ -15,5 +15,5 @@ add_chanal = InlineKeyboardMarkup(inline_keyboard=[
     ])
 
 set_usr = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton(text="Назначить админа", request_user=KeyboardButtonRequestUser(request_id=1,user_is_bot=False))]
+    [KeyboardButton(text="Выдать премиум", request_user=KeyboardButtonRequestUser(request_id=1,user_is_bot=False))]
 ], one_time_keyboard=True, resize_keyboard=True)
