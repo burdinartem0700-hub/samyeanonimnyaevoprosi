@@ -5,7 +5,7 @@ import types
 import urllib.parse
 
 from aiogram import Bot, Dispatcher, F, types
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram import Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton,  SwitchInlineQueryChosenChat
@@ -54,6 +54,7 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
         info_message[user_id] = mesid.message_id
     else:
         bot_me = await message.bot.get_me()
+        global ref_link
         ref_link = f"https://t.me/{bot_me.username}?start={user_id}"
         send_url = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Отправить ссылку",
@@ -218,10 +219,32 @@ async def state_prem(message: Message, state: FSMContext):
 @router.message(Edits.eid)
 async def edit_state(message: Message, state: FSMContext):
     data = await state.update_data()
-    text = f"💬 Вам пришло сообщение:\n\n<blockquote>{message.text}</blockquote>\n\nСвайпните для ответа👈"
-    await message.bot.edit_message_text(chat_id=data['ed_user_id'], message_id=data['eid'], text = text, parse_mode="HTML")
+    if message.text:
+        text = f"💬 Вам пришло сообщение:\n\n<blockquote>{message.text}</blockquote>\n\nСвайпните для ответа👈"
+        await message.bot.edit_message_text(chat_id=data['ed_user_id'], message_id=data['eid'], text = text, parse_mode="HTML")
+    elif message.photo:
+        file_id = message.photo[-1].file_id
+        cap = message.caption or " "
+        await message.bot.edit_message_media(chat_id=data['ed_user_id'], message_id=data['eid'],media=InputMediaPhoto(media=file_id, caption=cap))
+    elif message.video:
+        file_id = message.video.file_id
+        cap = message.caption or " "
+        await message.bot.edit_message_media(chat_id=data['ed_user_id'], message_id=data['eid'], media=InputMediaPhoto(media=file_id, caption=cap))
+    elif message.audio:
+        file_id = message.audio.file_id
+        cap = message.caption or " "
+        await message.bot.edit_message_media(chat_id=data['ed_user_id'], message_id=data['eid'], media = InputMediaPhoto(media=file_id, caption=cap))
+    elif message.voice:
+        file_id = message.voice.file_id
+        cap = message.caption or " "
+        await message.bot.edit_message_media(chat_id=data['ed_user_id'], message_id=data['eid'], media = InputMediaPhoto(media=file_id, caption=cap))
     await message.answer("✅Сообщение отредактировано!")
     await state.clear()
+    await message.answer(
+        f"💌Здесь вы можете получать анонимные сообщения!!\n\n"
+        f"📎 Ваша  ссылка:\n{ref_link}\n\n"
+        f"👥C помощью этой ссылки, люди смогут писать вам анонимные сообщения!!"
+    )
 
 @router.message()
 async def forward_to_referrer(message: Message, state: FSMContext):
@@ -342,6 +365,12 @@ async def forward_to_referrer(message: Message, state: FSMContext):
                     await message.bot.send_message(chat_id=id_usr,
                                            text=f"Юзер @{message.from_user.username}\nid = {message.from_user.first_name}\nимя = {message.from_user.id}")
             await message.reply("✅ Сообщение отправлено.", reply_markup=delte_key)
+            delte_key = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Удалить сообщенние", callback_data=f"delet_{id_usr}")],
+                [InlineKeyboardButton(text="Написать еще", callback_data=f"writing_{id_usr}")],
+                [InlineKeyboardButton(text="Редактировать сообщение",
+                                      callback_data=f"edit_{mesid.message_id}_{id_usr}")]
+            ])
             repli_await[mesid.message_id] = user_id
             delete_mes_usr[user_id] = mesid.message_id
             a.add_send_mes(id_usr)
