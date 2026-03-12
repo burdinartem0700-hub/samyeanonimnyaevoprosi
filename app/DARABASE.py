@@ -9,21 +9,15 @@ def init_db():
                         user_id INTENGER PRIMARY KEY,
                         first_name TEXT,
                         username TEXT)""")
-
     cursor.execute("""CREATE TABLE IF NOT EXISTS premium (
                         user_id INTENGER PRIMARY KEY,
                         first_name TEXT,
                         username TEXT)""")
-
     cursor.execute("""CREATE TABLE IF NOT EXISTS static (
                             user_id INTENGER PRIMARY KEY,
                             send_message INTENGER DEFAULT 0,
                             rec_message INTENGER DEFAULT 0,
                             ref INTENGER DEFAULT 0)""")
-
-    cursor.execute("""CREATE TABLE IF NOT EXISTS date(
-                        user_id INTENGER PRIMARY KEY,
-                        dates DATE)""")
     con.commit()
 
 def add_admin(user_id, first_name, username):
@@ -54,8 +48,8 @@ def del_admin(user_id):
     con.commit()
 
 #премиум пользовтели
-def add_premium(user_prem, first_name, username):
-    cursor.execute("INSERT OR REPLACE INTO premium VALUES (?, ?, ?)", (user_prem, first_name, username))
+def add_premium(user_id,first_name,  username):
+    cursor.execute("INSERT OR REPLACE INTO premium VALUES (?, ?, ?)", (user_id,first_name, username,))
     con.commit()
 
 def del_prem(user_id):
@@ -69,18 +63,6 @@ def is_prem(user_id):
 def get_premium():
     cursor.execute("SELECT * FROM premium")
     return cursor.fetchall()
-
-def add_date(user_id, date):
-    cursor.execute("INSERT OR REPLACE INTO date VALUES (?, ?)", (user_id, date,))
-    con.commit()
-
-def get_date(user_id):
-    cursor.execute("SELECT dates FROM date WHERE user_id = ?", (user_id,))
-    return cursor.fetchone()
-
-def data_get(user_id):
-    cursor.execute("SELECT dates FROM date WHERE user_id= ?", (user_id,))
-    return cursor.fetchone()
 
 #рейтинг
 def add_id(user_id):
